@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 43 37% 96%;
+    --foreground: 221 39% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 221 39% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 221 39% 11%;
+    --primary: 193 76% 17%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 36 66% 47%;
+    --secondary-foreground: 193 76% 17%;
+    --muted: 216 8% 65%;
+    --muted-foreground: 215 14% 34%;
+    --accent: 193 53% 93%;
+    --accent-foreground: 193 76% 17%;
+    --destructive: 0 73% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 70% 29%;
+    --success-foreground: 0 0% 100%;
+    --warning: 32 91% 37%;
+    --warning-foreground: 0 0% 100%;
+    --border: 216 12% 91%;
+    --input: 216 12% 91%;
+    --ring: 193 76% 17%;
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 216 12% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background-color: #F8F6F1;
+    color: #111827;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-[1.02];
+  }
+}
+
+/* Logo draw animation */
+@keyframes draw-stroke {
+  from { stroke-dashoffset: 200; }
+  to { stroke-dashoffset: 0; }
+}
+.logo-draw path, .logo-draw polyline, .logo-draw line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-stroke 1.8s ease-in forwards;
+}
+
+/* Shake animation for form validation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-6px); }
+  30%, 60%, 90% { transform: translateX(6px); }
+  50% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Red flash for cards */
+@keyframes red-flash {
+  0%, 100% { border-color: #E5E7EB; }
+  50% { border-color: #B91C1C; }
+}
+.animate-red-flash {
+  animation: red-flash 0.6s ease-in-out;
+}
+
+/* Border pulse for unanswered */
+@keyframes borderPulse {
+  0%, 100% { border-color: #B91C1C; box-shadow: 0 0 0 0 rgba(185,28,28,0.3); }
+  50% { border-color: #B91C1C; box-shadow: 0 0 0 4px rgba(185,28,28,0.1); }
+}
+.animate-border-pulse {
+  animation: borderPulse 0.75s ease-in-out 2;
+}
+
+/* Confetti particle burst */
+@keyframes confetti-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { opacity: 0; }
+}
+.confetti-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C4872A;
+  animation: confetti-burst 0.8s ease-out forwards;
+}
+
+/* Pulse ring for active journey node */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(196, 135, 42, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(196, 135, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(196, 135, 42, 0); }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Breathing gradient for hero */
+@keyframes breathe {
+  0%, 100% { background-position: 30% 40%; }
+  50% { background-position: 50% 60%; }
+}
+.bg-breathe {
+  background: radial-gradient(ellipse at 30% 40%, rgba(26,100,120,0.3) 0%, transparent 70%);
+  background-size: 200% 200%;
+  animation: breathe 8s ease-in-out infinite alternate;
+}
+
+/* Grain overlay */
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Print stylesheet */
+@media print {
+  nav, .progress-bar-global, .mode-toggle, .no-print {
+    display: none !important;
+  }
+  details[open] > summary ~ * {
+    display: block !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .print-expand {
+    display: block !important;
+    max-height: none !important;
+  }
+}
