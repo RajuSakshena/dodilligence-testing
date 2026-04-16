@@ -47,10 +47,10 @@ export const PARAMETERS: ParameterSection[] = [
       },
       {
         id: "12a-registration",
-        name: "12AB Registration",
+        name: "12AA Registration",
         category: "mandatory",
-        purpose: "Grants income tax exemption. Without 12AB, your organisation pays tax on surplus and most institutional funders won't engage.",
-        whatItIs: "A registration under Section 12AB of the Income Tax Act that exempts your income from tax.",
+        purpose: "Grants income tax exemption. Without 12AA, your organisation pays tax on surplus and most institutional funders won't engage.",
+        whatItIs: "A registration under Section 12AA of the Income Tax Act that exempts your income from tax.",
         actionStep: "Apply through the Income Tax e-filing portal (Form 10A or 10AB). Consult your CA for documentation. Processing takes 3–6 months."
       },
       {

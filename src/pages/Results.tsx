@@ -104,6 +104,120 @@ const Results = () => {
   const attentionLines = getAttentionAnalysis();
   const hasMandatoryNo = filteredParams.some(p => p.documents.some(d => d.category === "mandatory" && answers[d.id] === "no"));
 
+  // All priority actions (used by every accordion)
+  const allActions = getPriorityActions(answers, orgProfile.foreignFunds, 0, filteredParams);
+
+  // Reusable accordion with simplified UI
+  const HealthAccordion = ({ param }: { param: any }) => {
+    const Icon = getParameterIcon(param.iconName);
+    const isOpen = openSection === param.id;
+    const status = getSectionStatus(param.id);
+    const applicableDocs = param.documents;
+    const mandatoryDocs = applicableDocs.filter((d: any) => d.category === "mandatory");
+    const mandatoryYes = mandatoryDocs.filter((d: any) => answers[d.id] === "yes").length;
+    const barColor = status.color;
+    const barPercent = mandatoryDocs.length > 0 ? (mandatoryYes / mandatoryDocs.length) * 100 : 100;
+
+    return (
+      <div
+        className={`rounded-xl overflow-hidden border border-[#E5E7EB] border-l-4 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.01] ${status.bgTint}`}
+        style={{ borderLeftColor: status.color }}
+      >
+        <button
+          onClick={() => toggleSection(param.id)}
+          className="w-full p-5 flex items-center gap-4 hover:bg-[#F8F6F1]/50 transition-colors"
+        >
+          {/* Icon + Parameter name + Status pill */}
+          <Icon size={22} style={{ color: status.color }} className="shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-semibold text-[#0B3D4A] text-[17px]">{param.name}</span>
+              <span
+                className="px-3 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+                style={{ backgroundColor: `${status.color}15`, color: status.color }}
+              >
+                {status.label}
+              </span>
+            </div>
+          </div>
+        </button>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="border-t border-[#E5E7EB] p-4 space-y-1">
+                {/* Thinner progress bar */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-1 bg-[#E5E7EB] rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${barPercent}%` }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      style={{ backgroundColor: barColor }}
+                    />
+                  </div>
+                  <span className="font-mono text-sm font-bold" style={{ color: barColor }}>
+                    {Math.round(barPercent)}%
+                  </span>
+                </div>
+
+                {applicableDocs.map((doc: any) => {
+                  const docStatus = answers[doc.id];
+                  const docAction = allActions.find((a: any) => a.docId === doc.id);
+
+                  return (
+                    <div key={doc.id}>
+                      <div className="flex items-center gap-3 py-2 border-b border-[#F3F4F6]">
+                        {docStatus === "yes" ? (
+                          <CheckCircle size={16} className="text-[#15803D] shrink-0" />
+                        ) : (
+                          <XCircle size={16} className="text-[#B91C1C] shrink-0" />
+                        )}
+                        <span className="text-sm text-[#111827] font-body">{doc.name}</span>
+                      </div>
+
+                      {docAction && docStatus === "no" && (
+                        <div
+                          className={`ml-4 my-2 rounded-md p-3 text-xs space-y-1.5 border-l-[3px] ${
+                            doc.category === "mandatory"
+                              ? "bg-[#FFF5F5] border-l-[#B91C1C]"
+                              : "bg-[#FFFBF0] border-l-[#D97706]"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium uppercase tracking-wide ${
+                              (priorityColors[docAction.priority] || priorityColors.Growth).text
+                            }`}
+                            style={{ backgroundColor: `${status.color}10` }}
+                          >
+                            {docAction.priority}
+                          </span>
+                          <p className="text-[#111827]">
+                            <span className="font-medium">What to do:</span> {doc.actionStep}
+                          </p>
+                          <p className="text-[#6B7280]">
+                            <span className="font-medium text-[#111827]">Estimated time:</span> {docAction.timeEstimate}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen">
       {/* CSR Alert Banner */}
@@ -175,124 +289,15 @@ const Results = () => {
             </div>
           </div>
 
-          {/* 6 Health Areas Accordion */}
+          {/* 6 Health Areas */}
           <h2 className="font-display font-bold text-[#0B3D4A] text-[22px] mb-1">Your 6 Health Areas</h2>
           <p className="text-sm text-[#6B7280] font-body mb-6">Select any area to see your detailed status.</p>
 
-          <div className="space-y-3 mb-10">
-            {filteredParams.map((param) => {
-              const Icon = getParameterIcon(param.iconName);
-              const isOpen = openSection === param.id;
-              const status = getSectionStatus(param.id);
-              const applicableDocs = param.documents;
-              const mandatoryDocs = applicableDocs.filter((d) => d.category === "mandatory");
-              const mandatoryYes = mandatoryDocs.filter((d) => answers[d.id] === "yes").length;
-              const allActions = getPriorityActions(answers, orgProfile.foreignFunds, 0, filteredParams);
-              const barColor = status.color;
-              const barPercent = mandatoryDocs.length > 0 ? (mandatoryYes / mandatoryDocs.length) * 100 : 100;
-
-              return (
-                <div
-                  key={param.id}
-                  className="bg-white rounded-xl overflow-hidden"
-                  style={{ border: `1.5px solid ${status.color}` }}
-                >
-                  <button
-                    onClick={() => toggleSection(param.id)}
-                    className="w-full flex items-center gap-3 p-4 hover:bg-[#F8F6F1]/50 transition-colors"
-                  >
-                    <div className="w-1 self-stretch rounded-sm" style={{ backgroundColor: status.color }} />
-                    <Icon size={18} style={{ color: status.color }} className="shrink-0" />
-                    <div className="flex-1 text-left min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-display font-semibold text-[#0B3D4A] text-[17px]">{param.name}</span>
-                        <span
-                          className="px-2 py-0.5 rounded-full text-xs font-medium"
-                          style={{ backgroundColor: status.color + "15", color: status.color }}
-                        >
-                          {status.label}
-                        </span>
-                      </div>
-                      <p className="text-[13px] text-[#6B7280]">
-                        {mandatoryDocs.length > 0
-                          ? `${mandatoryYes} of ${mandatoryDocs.length} mandatory documents present`
-                          : `${applicableDocs.filter(d => answers[d.id] === "yes").length} of ${applicableDocs.length} documents present`
-                        }
-                      </p>
-                    </div>
-                    <motion.div
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown size={18} className="text-[#9CA3AF]" />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="border-t border-[#E5E7EB] p-4 space-y-1">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="flex-1 h-1.5 bg-[#E5E7EB] rounded-full overflow-hidden">
-                              <motion.div
-                                className="h-full rounded-full"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${barPercent}%` }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                style={{ backgroundColor: barColor }}
-                              />
-                            </div>
-                            <span className="font-mono text-sm font-bold" style={{ color: barColor }}>
-                              {Math.round(barPercent)}%
-                            </span>
-                          </div>
-
-                          {applicableDocs.map((doc) => {
-                            const docStatus = answers[doc.id];
-                            const docAction = allActions.find((a) => a.docId === doc.id);
-
-                            return (
-                              <div key={doc.id}>
-                                <div className="flex items-center gap-3 py-2 border-b border-[#F3F4F6]">
-                                  {docStatus === "yes" ? (
-                                    <CheckCircle size={16} className="text-[#15803D] shrink-0" />
-                                  ) : (
-                                    <XCircle size={16} className="text-[#B91C1C] shrink-0" />
-                                  )}
-                                  <span className="text-sm text-[#111827] font-body">{doc.name}</span>
-                                </div>
-
-                                {docAction && docStatus === "no" && (
-                                  <div className={`ml-4 my-2 rounded-md p-3 text-xs space-y-1.5 border-l-[3px] ${
-                                    doc.category === "mandatory" ? "bg-[#FFF5F5] border-l-[#B91C1C]" : "bg-[#FFFBF0] border-l-[#D97706]"
-                                  }`}>
-                                    <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium uppercase tracking-wide ${
-                                      (priorityColors[docAction.priority] || priorityColors.Growth).text
-                                    }`}
-                                      style={{ backgroundColor: `${status.color}10` }}
-                                    >
-                                      {docAction.priority}
-                                    </span>
-                                    <p className="text-[#111827]"><span className="font-medium">What to do:</span> {doc.actionStep}</p>
-                                    <p className="text-[#6B7280]"><span className="font-medium text-[#111827]">Estimated time:</span> {docAction.timeEstimate}</p>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
+          {/* All sections with simplified accordion */}
+          <div className="space-y-4 mb-10">
+            {filteredParams.map((param) => (
+              <HealthAccordion key={param.id} param={param} />
+            ))}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mb-4 no-print">
@@ -309,16 +314,24 @@ const Results = () => {
               Connect with us to support you in your journey!
             </a>
           </div>
-          {hasMandatoryNo && (
-            <div className="mb-4 no-print">
+
+          {/* CTA section with both links */}
+          <div className="mb-4 no-print flex flex-col">
+            {hasMandatoryNo && (
               <Link
                 to="/gift"
                 className="inline-flex items-center gap-1 text-sm text-[#C4872A] hover:underline font-medium transition-colors"
               >
                 Claim checklists to strengthen your gaps. <span>→</span>
               </Link>
-            </div>
-          )}
+            )}
+            <button
+              onClick={() => (window.location.href = "http://localhost:8080/")}
+              className={`inline-flex items-center gap-1 text-sm text-[#C4872A] hover:underline font-medium transition-colors ${hasMandatoryNo ? "mt-2" : ""}`}
+            >
+              Start assessment for a new organisation <span>→</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

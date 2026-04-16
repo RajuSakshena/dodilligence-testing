@@ -70,23 +70,8 @@ const Assessment = () => {
     setShowSummary(true);
   };
 
-  const handleConfirmAndContinue = async () => {
+  const handleConfirmAndContinue = () => {
     setShowSummary(false);
-    try {
-      const orgId = localStorage.getItem("orgId");
-      await fetch("https://tmi-backend.onrender.com/save-assessment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: orgId,
-          assessment: answers
-        }),
-      });
-    } catch (error) {
-      console.error("Failed to save assessment:", error);
-    }
     if (isLast) {
       navigate("/results");
     } else {

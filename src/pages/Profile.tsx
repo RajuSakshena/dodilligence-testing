@@ -16,6 +16,14 @@ const Profile = () => {
   const [shakeField, setShakeField] = useState<string | null>(null);
   const [showConfModal, setShowConfModal] = useState(false);
 
+  // New states for track organisation section (completely optional)
+  const [showTrackForm, setShowTrackForm] = useState(false);
+  const [trackForm, setTrackForm] = useState({
+    orgName: "",
+    email: "",
+    designation: ""
+  });
+
   const isLocalProfileComplete =
     localProfile.name.trim() !== "" &&
     localProfile.registrationType !== "" &&
@@ -27,6 +35,10 @@ const Profile = () => {
   const update = (field: string, value: any) => {
     setLocalProfile((p: any) => ({ ...p, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: false }));
+  };
+
+  const updateTrackForm = (field: string, value: string) => {
+    setTrackForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
@@ -45,6 +57,11 @@ const Profile = () => {
       return;
     }
 
+    setOrgProfile(localProfile);
+    setConfidentialityAccepted(true);
+    navigate("/assessment/legal");
+
+    // API call runs in background - non-blocking
     try {
       const response = await fetch("https://tmi-backend.onrender.com/save-profile", {
         method: "POST",
@@ -69,13 +86,8 @@ const Profile = () => {
       const data = await response.json();
 
       localStorage.setItem("orgId", data.id);
-
-      setOrgProfile(localProfile);
-      setConfidentialityAccepted(true);
-      navigate("/assessment/legal");
     } catch (error) {
       console.error("Error saving profile:", error);
-      return;
     }
   };
 
@@ -96,6 +108,9 @@ const Profile = () => {
     setErrors((prev) => ({ ...prev, confidentiality: false }));
   };
 
+  // Basic email validation (contains "@") - only shows error if user has typed something (UI only)
+  const showEmailError = trackForm.email.length > 0 && !trackForm.email.includes("@");
+
   return (
     <div className="pt-24 pb-16 px-6" style={{ backgroundColor: "#F8F6F1" }}>
       <div className="max-w-[640px] mx-auto">
@@ -104,9 +119,7 @@ const Profile = () => {
           {Array.from({ length: 8 }, (_, i) => (
             <div
               key={i}
-              className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                i === 0 ? "bg-[#0B3D4A]" : "bg-[#E5E7EB]"
-              }`}
+              className={`w-2.5 h-2.5 rounded-full transition-colors ${i === 0 ? "bg-[#0B3D4A]" : "bg-[#E5E7EB]"}`}
             />
           ))}
         </div>
@@ -174,12 +187,16 @@ const Profile = () => {
               {errors.state && <p className="text-xs text-[#B91C1C] mt-1">{errorMessages.state}</p>}
             </div>
 
-            {/* City */}
+            {/* City - Headquartered In with validation (alphabets + spaces only) */}
             <div>
               <label className="block text-sm font-medium text-[#111827] mb-1.5">Headquartered In</label>
               <Input
                 value={localProfile.city}
-                onChange={(e) => update("city", e.target.value)}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                  value = value.replace(/\s+/g, " "); // collapse multiple spaces
+                  update("city", value);
+                }}
                 placeholder=""
                 className="border-[#E5E7EB] focus:border-[#0B3D4A] focus:ring-[#0B3D4A]"
               />
@@ -236,8 +253,9 @@ const Profile = () => {
           </div>
         </motion.div>
 
-        {/* Confidentiality link + Checkbox */}
+        {/* Confidentiality link + NEW Track section (completely optional) + Checkbox */}
         <div className="mt-8 mb-6">
+          {/* Confidentiality note link */}
           <button
             onClick={() => setShowConfModal(true)}
             className="text-[13px] text-[#1A6478] hover:underline mb-3 block"
@@ -245,6 +263,69 @@ const Profile = () => {
             Read our confidentiality note →
           </button>
 
+          {/* NEW expandable Track Organisation section - completely optional */}
+          <button
+            onClick={() => setShowTrackForm(!showTrackForm)}
+            className="text-[13px] text-[#1A6478] hover:underline mb-3 block"
+          >
+            Have you tracked your organisation before? →
+          </button>
+
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: showTrackForm ? 1 : 0,
+              height: showTrackForm ? "auto" : 0,
+            }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-4">
+              {/* Helper text */}
+              <p className="text-xs text-[#4B5563]">
+                This helps us personalise your experience
+              </p>
+
+              {/* Track Organisation Name */}
+              <div>
+                <label className="block text-sm font-medium text-[#111827] mb-1.5">Organisation Name</label>
+                <Input
+                  value={trackForm.orgName}
+                  onChange={(e) => updateTrackForm("orgName", e.target.value)}
+                  placeholder="e.g. ABC Foundation"
+                  className="border-[#E5E7EB] focus:border-[#0B3D4A] focus:ring-[#0B3D4A]"
+                />
+              </div>
+
+              {/* Track Email ID with basic validation (UI only) */}
+              <div>
+                <label className="block text-sm font-medium text-[#111827] mb-1.5">Email ID</label>
+                <Input
+                  value={trackForm.email}
+                  onChange={(e) => updateTrackForm("email", e.target.value)}
+                  placeholder="e.g. founder@org.com"
+                  className={`border-[#E5E7EB] focus:border-[#0B3D4A] focus:ring-[#0B3D4A] ${
+                    showEmailError ? "border-[#B91C1C]" : ""
+                  }`}
+                />
+                {showEmailError && (
+                  <p className="text-xs text-[#B91C1C] mt-1">Please enter a valid email (must contain @)</p>
+                )}
+              </div>
+
+              {/* Track Designation */}
+              <div>
+                <label className="block text-sm font-medium text-[#111827] mb-1.5">Designation</label>
+                <Input
+                  value={trackForm.designation}
+                  onChange={(e) => updateTrackForm("designation", e.target.value)}
+                  placeholder="e.g. Founder / Director"
+                  className="border-[#E5E7EB] focus:border-[#0B3D4A] focus:ring-[#0B3D4A]"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Confidentiality Checkbox */}
           <div className={shakeField === "confidentiality" ? "animate-shake" : ""}>
             <label className="flex items-start gap-3 cursor-pointer group">
               <button
