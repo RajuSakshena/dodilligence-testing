@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAssessment } from "@/store/assessment-context";
 import { motion } from "framer-motion";
+import TmiLogo from "@/images/TMI.png";
 
 const ThankYou = () => {
   const navigate = useNavigate();
@@ -20,14 +21,16 @@ const ThankYou = () => {
         variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
       >
         {/* TMI Logo */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } }}
-          className="flex justify-center mb-10"
-        >
-          <div className="w-[200px] h-[60px] rounded-lg flex items-center justify-center" style={{ backgroundColor: "#0B3D4A" }}>
-            <span className="text-white font-body font-medium text-[13px] tracking-[0.08em]">THE METROPOLITAN INSTITUTE</span>
-          </div>
-        </motion.div>
+       <motion.div
+  variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } }}
+  className="flex justify-center mb-10"
+>
+  <img 
+    src={TmiLogo} 
+    alt="TMI Logo" 
+    className="h-16 md:h-20 object-contain"
+  />
+</motion.div>
 
         {/* Gold rule */}
         <motion.div

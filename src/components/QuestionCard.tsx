@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, AlertTriangle, X } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { type AssessmentDocument, type AnswerStatus } from "@/lib/assessment-data";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,6 @@ const categoryBadges: Record<string, { bg: string; text: string; border: string;
 const QuestionCard = ({ doc, answer, onAnswer }: QuestionCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const cat = categoryBadges[doc.category];
-  const showRedFlag = answer === "no" && doc.category === "mandatory";
 
   return (
     <>
@@ -38,11 +37,6 @@ const QuestionCard = ({ doc, answer, onAnswer }: QuestionCardProps) => {
             {cat.label}
           </span>
         </div>
-
-        {/* Conditional note for TAN */}
-        {doc.conditionalNote && (
-          <p className="text-xs text-[#6B7280] mb-3 leading-relaxed">{doc.conditionalNote}</p>
-        )}
 
         {/* Answer buttons */}
         <div className="flex gap-3 mb-3">
@@ -83,26 +77,6 @@ const QuestionCard = ({ doc, answer, onAnswer }: QuestionCardProps) => {
         </div>
       </div>
 
-      {/* Warning strip for mandatory No */}
-      <AnimatePresence>
-        {showRedFlag && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="mt-2 bg-[#FFF5F5] border-[1.5px] border-[#B91C1C] rounded-[10px] px-4 py-3 flex items-start gap-3">
-              <AlertTriangle size={16} className="text-[#B91C1C] shrink-0 mt-0.5" />
-              <p className="text-sm text-[#B91C1C]">
-                {doc.name} is a mandatory document. Funders will look for this — it is important to have it in place before approaching any donor.
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Learn More Modal */}
       <AnimatePresence>
         {showModal && (
@@ -133,6 +107,17 @@ const QuestionCard = ({ doc, answer, onAnswer }: QuestionCardProps) => {
 
               {/* Body */}
               <div className="p-6 space-y-5">
+                {doc.conditionalNote && (
+                  <div>
+                    <p className="text-[12px] font-medium text-[#0B3D4A] uppercase tracking-wider mb-1.5">
+                      When is this required
+                    </p>
+                    <p className="text-[15px] text-[#111827] font-body leading-relaxed">
+                      {doc.conditionalNote}
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <p className="text-[12px] font-medium text-[#0B3D4A] uppercase tracking-wider mb-1.5">Why it matters</p>
                   <p className="text-[15px] text-[#111827] font-body leading-relaxed">{doc.purpose}</p>

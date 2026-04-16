@@ -107,6 +107,44 @@ const Results = () => {
   // All priority actions (used by every accordion)
   const allActions = getPriorityActions(answers, orgProfile.foreignFunds, 0, filteredParams);
 
+  const DonutChart = ({ percent, color }: { percent: number; color: string }) => {
+    const radius = 26;
+    const stroke = 6;
+    const normalizedRadius = radius - stroke / 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+    const strokeDashoffset = circumference - (percent / 100) * circumference;
+
+    return (
+      <div className="relative w-[64px] h-[64px]">
+        <svg height="64" width="64">
+          <circle
+            stroke="#E5E7EB"
+            fill="transparent"
+            strokeWidth={stroke}
+            r={normalizedRadius}
+            cx="32"
+            cy="32"
+          />
+          <circle
+            stroke={color}
+            fill="transparent"
+            strokeWidth={stroke}
+            strokeDasharray={circumference + " " + circumference}
+            style={{ strokeDashoffset, transition: "stroke-dashoffset 0.6s ease" }}
+            strokeLinecap="round"
+            r={normalizedRadius}
+            cx="32"
+            cy="32"
+          />
+        </svg>
+
+        <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold">
+          {Math.round(percent)}%
+        </div>
+      </div>
+    );
+  };
+
   // Reusable accordion with simplified UI
   const HealthAccordion = ({ param }: { param: any }) => {
     const Icon = getParameterIcon(param.iconName);
@@ -125,21 +163,26 @@ const Results = () => {
       >
         <button
           onClick={() => toggleSection(param.id)}
-          className="w-full p-5 flex items-center gap-4 hover:bg-[#F8F6F1]/50 transition-colors"
+          className="w-full p-5 flex items-center justify-between gap-4 hover:bg-[#F8F6F1]/50 transition-colors"
         >
-          {/* Icon + Parameter name + Status pill */}
-          <Icon size={22} style={{ color: status.color }} className="shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-display font-semibold text-[#0B3D4A] text-[17px]">{param.name}</span>
-              <span
-                className="px-3 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                style={{ backgroundColor: `${status.color}15`, color: status.color }}
-              >
-                {status.label}
-              </span>
+          <div className="flex items-center gap-4">
+            <Icon size={22} style={{ color: status.color }} />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-display font-semibold text-[#0B3D4A] text-[17px]">
+                  {param.name}
+                </span>
+                <span
+                  className="px-3 py-0.5 rounded-full text-xs font-medium"
+                  style={{ backgroundColor: `${status.color}15`, color: status.color }}
+                >
+                  {status.label}
+                </span>
+              </div>
             </div>
           </div>
+
+          <DonutChart percent={barPercent} color={status.color} />
         </button>
 
         <AnimatePresence>
@@ -152,20 +195,8 @@ const Results = () => {
               className="overflow-hidden"
             >
               <div className="border-t border-[#E5E7EB] p-4 space-y-1">
-                {/* Thinner progress bar */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1 h-1 bg-[#E5E7EB] rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${barPercent}%` }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      style={{ backgroundColor: barColor }}
-                    />
-                  </div>
-                  <span className="font-mono text-sm font-bold" style={{ color: barColor }}>
-                    {Math.round(barPercent)}%
-                  </span>
+                <div className="mb-4 text-sm text-[#6B7280]">
+                  {mandatoryYes} / {mandatoryDocs.length} mandatory completed
                 </div>
 
                 {applicableDocs.map((doc: any) => {
@@ -308,7 +339,7 @@ const Results = () => {
               Share & Export
             </Link>
             <a
-              href="#"
+              href="https://themetropolitaninstitute.com/"
               className="flex-1 py-3 rounded-xl border-2 border-[#0B3D4A] text-[#0B3D4A] font-display font-semibold text-sm text-center hover:bg-[#E4F2F6] transition-all"
             >
               Connect with us to support you in your journey!
