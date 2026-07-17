@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import Logo from "@/components/Logo";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
@@ -33,22 +32,22 @@ const CountUp = ({ target, suffix = "" }: { target: number; suffix?: string }) =
   }, [isInView, target]);
 
   return (
-    <span ref={ref} className="font-mono text-5xl md:text-6xl font-bold text-[#111827]">
+    <span ref={ref} className="font-display text-5xl md:text-6xl font-bold text-[#111827]">
       {count}{suffix}
     </span>
   );
 };
 
 const SwooshArrow = ({ className = "" }: { className?: string }) => (
-  <svg width="80" height="48" viewBox="0 0 80 48" fill="none" className={className} style={{ overflow: "visible" }}>
+  <svg width="90" height="56" viewBox="0 0 90 56" fill="none" className={className} style={{ overflow: "visible", flexShrink: 0 }}>
     <path
-      d="M4 36 C24 8, 56 8, 72 28"
+      d="M9 40 C27 12, 57 12, 76 30"
       stroke="#C4872A"
       strokeWidth="2"
       strokeLinecap="round"
       fill="none"
     />
-    <path d="M66 22 L73 28 L65 32" stroke="#C4872A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    <path d="M70 23 L78 30 L69 35" stroke="#C4872A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
   </svg>
 );
 
@@ -66,7 +65,11 @@ const Landing = () => {
           transition={{ duration: 0.8 }}
           className="relative z-10 mb-8"
         >
-          <Logo size={80} animate={true} color="#FFFFFF" />
+          <img
+            src="/TMI.png"
+            alt="The Metropolitan Institute"
+            className="w-24 md:w-28 h-auto object-contain"
+          />
         </motion.div>
 
         <motion.h1
@@ -115,6 +118,66 @@ const Landing = () => {
             <ArrowRight size={20} />
           </Link>
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 8, 0] }}
+          transition={{ opacity: { duration: 0.7, delay: 1 }, y: { duration: 1.8, repeat: Infinity, ease: "easeInOut" } }}
+          className="absolute z-10 right-6 bottom-8 md:right-10 md:bottom-10 flex flex-col items-center gap-1.5 text-white/70"
+        >
+          <span className="font-body text-xs tracking-[0.08em] uppercase">Swipe Down</span>
+          <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+            <path d="M8 1 V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M2 12 L8 18 L14 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </motion.div>
+      </section>
+
+      {/* HOW IT WORKS - Warm */}
+      <section className="relative py-16 md:py-20 overflow-hidden" style={{ backgroundColor: "#8B6B47" }}>
+        <div className="absolute inset-0 grain-overlay" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="font-display font-bold text-white text-2xl md:text-3xl text-center mb-12"
+          >
+            How it works
+          </motion.h2>
+
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-0 items-center"
+          >
+            {[
+              { num: "1", title: "Tell us about your organisation", desc: "A quick profile to tailor the assessment" },
+              { num: "2", title: "Answer questions across 6 areas", desc: "Simple yes/no for each document" },
+              { num: "3", title: "Get your personalised CSR-readiness report", desc: "See exactly where you stand" },
+            ].map((step, i) => (
+              <>
+                <motion.div key={step.num} variants={fadeInUp} className="flex flex-col items-center text-center">
+                  <span className="font-mono text-[#C4872A] text-5xl font-bold mb-3">{step.num}</span>
+                  <p className="text-white font-display font-semibold text-lg mb-2">{step.title}</p>
+                  <p className="text-[#A8CCD5] font-body text-sm">{step.desc}</p>
+                </motion.div>
+                {i < 2 && (
+                  <div key={`arrow-${i}`} className="hidden md:flex items-center justify-center px-2">
+                    <SwooshArrow />
+                  </div>
+                )}
+                {i < 2 && (
+                  <div key={`arrow-mobile-${i}`} className="md:hidden flex justify-center py-2">
+                    <SwooshArrow className="rotate-90" />
+                  </div>
+                )}
+              </>
+            ))}
+          </motion.div>
+        </div>
       </section>
 
       {/* STATS STRIP - Light */}
@@ -129,7 +192,7 @@ const Landing = () => {
           >
             {[
               { value: 6, suffix: "", label: "Health Areas" },
-              { value: 22, suffix: "", label: "Documents" },
+              { value: 27, suffix: "", label: "Documents" },
               { value: 10, suffix: " min", label: "Average Time" },
             ].map((stat) => (
               <motion.div key={stat.label} variants={fadeInUp} className="flex flex-col items-center">
@@ -197,53 +260,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* HOW IT WORKS - Dark */}
-      <section className="relative py-16 md:py-20 overflow-hidden" style={{ backgroundColor: "#0B3D4A" }}>
-        <div className="absolute inset-0 grain-overlay" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-display font-bold text-white text-2xl md:text-3xl text-center mb-12"
-          >
-            How it works
-          </motion.h2>
-
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={stagger}
-            className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-0 items-center"
-          >
-            {[
-              { num: "1", title: "Tell us about your organisation", desc: "A quick profile to tailor the assessment" },
-              { num: "2", title: "Answer questions across 6 areas", desc: "Simple yes/no for each document" },
-              { num: "3", title: "Get your personalised CSR-readiness report", desc: "See exactly where you stand" },
-            ].map((step, i) => (
-              <>
-                <motion.div key={step.num} variants={fadeInUp} className="flex flex-col items-center text-center">
-                  <span className="font-mono text-[#C4872A] text-5xl font-bold mb-3">{step.num}</span>
-                  <p className="text-white font-display font-semibold text-lg mb-2">{step.title}</p>
-                  <p className="text-[#A8CCD5] font-body text-sm">{step.desc}</p>
-                </motion.div>
-                {i < 2 && (
-                  <div key={`arrow-${i}`} className="hidden md:flex items-center justify-center px-2">
-                    <SwooshArrow />
-                  </div>
-                )}
-                {i < 2 && (
-                  <div key={`arrow-mobile-${i}`} className="md:hidden flex justify-center py-2">
-                    <SwooshArrow className="rotate-90" />
-                  </div>
-                )}
-              </>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* CTA Section - Light */}
       <section className="py-20" style={{ backgroundColor: "#F8F6F1" }}>
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -269,7 +285,11 @@ const Landing = () => {
               <ArrowRight size={20} />
             </Link>
           </motion.div>
-          <p className="text-[#9CA3AF] text-sm mt-6">The Metropolitan Institute Initiative</p>
+          <p className="text-[#9CA3AF] text-sm mt-6 text-center">
+            An Initiative by
+            <br />
+            The Metropolitan Institute
+          </p>
         </div>
       </section>
 
@@ -277,10 +297,21 @@ const Landing = () => {
       <footer className="border-t border-[#E5E7EB] py-6" style={{ backgroundColor: "#F8F6F1" }}>
         <div className="max-w-4xl mx-auto px-6 flex items-center justify-between text-xs text-[#9CA3AF]">
           <div className="flex items-center gap-2">
-            <Logo size={20} />
-            <span>The Metropolitan Institute Initiative</span>
+            <img
+              src="/TMI.png"
+              alt="The Metropolitan Institute"
+              className="w-6 h-6 object-contain"
+            />
+            <span>An Initiative by The Metropolitan Institute</span>
           </div>
-          <Link to="/about" className="hover:text-[#111827] transition-colors">About Us</Link>
+          <a
+            href="https://themetropolitaninstitute.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#111827] transition-colors"
+          >
+            About Us
+          </a>
         </div>
       </footer>
     </div>

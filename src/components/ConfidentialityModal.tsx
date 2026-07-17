@@ -32,7 +32,7 @@ const ConfidentialityModal = ({ open, onClose, onAccept }: ConfidentialityModalP
               style={{ backgroundColor: "#0B3D4A" }}
             >
               <h2 className="font-display font-semibold text-white text-lg">
-                Your Privacy & Confidentiality
+                Privacy & Confidentiality Notice
               </h2>
               <button onClick={onClose} className="text-white/70 hover:text-white">
                 <X size={18} />
@@ -42,12 +42,13 @@ const ConfidentialityModal = ({ open, onClose, onAccept }: ConfidentialityModalP
             {/* Body */}
             <div className="p-8 overflow-y-auto space-y-5 text-[#111827] font-body text-[15px] leading-relaxed">
               <p className="font-display font-semibold text-[#0B3D4A]">
-                Your data stays yours.
+                Your information is handled securely and used only to generate and improve your organisation's funding-readiness assessment.
               </p>
               <p>
-                Everything you share with DoDiligence is used solely to generate your
-                funding-readiness assessment. We do not store, sell, or share your
-                organisation's information with any third party — ever.
+                Everything you share with DoDiligence is securely stored and used to
+                generate your funding-readiness assessment. We do not sell or share your
+                organisation's information with any third party without your consent,
+                except where required to do so by law.
               </p>
 
               <div>
@@ -61,7 +62,7 @@ const ConfidentialityModal = ({ open, onClose, onAccept }: ConfidentialityModalP
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0B3D4A]" />
-                    Your answers to the 22 document questions in the assessment
+                    Your answers to the 27 assessment documents
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0B3D4A]" />
@@ -77,15 +78,15 @@ const ConfidentialityModal = ({ open, onClose, onAccept }: ConfidentialityModalP
                 <ul className="space-y-1.5 text-[#4B5563]">
                   <li className="flex items-start gap-2">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0B3D4A]" />
-                    We do not store your responses on any server after your session ends
+                    We do not sell your organisation's information
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0B3D4A]" />
-                    We do not share your information with funders, donors, or any external party
+                    We do not share your assessment with funders, donors or external organisations without your consent
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0B3D4A]" />
-                    We do not use your data for marketing or profiling
+                    We do not use your information for advertising or commercial profiling
                   </li>
                 </ul>
               </div>
@@ -104,18 +105,19 @@ const ConfidentialityModal = ({ open, onClose, onAccept }: ConfidentialityModalP
                   Your session:
                 </p>
                 <p className="text-[#4B5563]">
-                  All data is held in your browser session only. When you close this tab, your responses are cleared.
+                  Your assessment responses are securely stored so you can continue
+                  your assessment and review your results later.
                 </p>
               </div>
 
               {/* ✅ FINAL FIX */}
               <div className="text-sm text-[#374151] mt-4">
                 <p>
-                  DoDiligence is a free tool built by The Metropolitan Institute. For any questions about how your data is handled, write to us at:
+                  DoDiligence is an initiative of The Metropolitan Institute. For any questions about how your data is handled, write to us at:
                 </p>
 
                 <a
-                  href="mailto:hello@themetropolitaninstitute.com"
+                  href="mailto:namaste@themetropolitaninstitute.com"
                   className="block mt-2 text-[#1A6478] hover:underline font-medium break-all"
                 >
                   namaste@themetropolitaninstitute.com

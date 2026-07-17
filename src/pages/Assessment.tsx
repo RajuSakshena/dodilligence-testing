@@ -31,6 +31,30 @@ const Assessment = () => {
     setUnansweredPulse(false);
   }, [sectionId, sectionIndex, setCurrentSectionIndex]);
 
+  // Resume from a previously saved draft, once, on initial load
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("dodiligence-assessment-draft");
+      if (!saved) return;
+      const draft = JSON.parse(saved);
+      if (draft?.answers) {
+        Object.entries(draft.answers as Record<string, "yes" | "no">).forEach(
+          ([docId, status]) => {
+            if (status != null && answers[docId] == null) {
+              setAnswer(docId, status);
+            }
+          }
+        );
+      }
+      if (draft?.sectionId && draft.sectionId !== sectionId) {
+        navigate(`/assessment/${draft.sectionId}`);
+      }
+    } catch {
+      // ignore malformed/unavailable draft data
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const applicableDocs = useMemo(() => {
     if (!param) return [];
     return param.documents;
@@ -77,6 +101,20 @@ const Assessment = () => {
     } else {
       navigate(`/assessment/${nextSection}`);
     }
+  };
+
+  const DRAFT_STORAGE_KEY = "dodiligence-assessment-draft";
+
+  const handleSaveDraft = () => {
+    try {
+      localStorage.setItem(
+        DRAFT_STORAGE_KEY,
+        JSON.stringify({ sectionId, answers })
+      );
+    } catch {
+      // ignore storage errors (e.g. private browsing)
+    }
+    setShowSaveDraft(true);
   };
 
   return (
@@ -148,7 +186,7 @@ const Assessment = () => {
         {/* Save as draft */}
         <div className="mt-4">
           <button
-            onClick={() => setShowSaveDraft(true)}
+            onClick={handleSaveDraft}
             className="text-[13px] text-[#6B7280] font-body hover:underline transition-colors"
           >
             Save as draft
@@ -251,4 +289,3 @@ const Assessment = () => {
 };
 
 export default Assessment;
-  

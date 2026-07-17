@@ -347,7 +347,7 @@ const Profile = () => {
                 )}
               </button>
               <span className="text-sm text-[#4B5563] font-body leading-relaxed">
-                I have read the confidentiality note. DoDiligence does not store or share my organisation's data with any third party.
+                I have read and understood the Privacy & Confidentiality Notice. I understand my information will be handled securely to generate my organisation's funding-readiness assessment.
               </span>
             </label>
             {errors.confidentiality && <p className="text-xs text-[#B91C1C] mt-1.5 ml-7">{errorMessages.confidentiality}</p>}

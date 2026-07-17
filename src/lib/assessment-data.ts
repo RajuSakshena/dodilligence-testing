@@ -47,10 +47,10 @@ export const PARAMETERS: ParameterSection[] = [
       },
       {
         id: "12a-registration",
-        name: "12AA Registration",
+        name: "12AB Registration",
         category: "mandatory",
-        purpose: "Grants income tax exemption. Without 12AA, your organisation pays tax on surplus and most institutional funders won't engage.",
-        whatItIs: "A registration under Section 12AA of the Income Tax Act that exempts your income from tax.",
+        purpose: "Grants income tax exemption. Without 12AB, your organisation pays tax on surplus and most institutional funders won't engage.",
+        whatItIs: "A registration under Section 12AB of the Income Tax Act that exempts your income from tax.",
         actionStep: "Apply through the Income Tax e-filing portal (Form 10A or 10AB). Consult your CA for documentation. Processing takes 3–6 months."
       },
       {
@@ -351,6 +351,12 @@ export const STATE_CAPITALS: Record<string, string> = {
   "Lakshadweep": "Kavaratti",
   "Puducherry": "Puducherry"
 };
+
+// Excludes documents that are only required conditionally on foreign-funds status,
+// so counts derived from this stay consistent with the "27 documents" figure used
+// elsewhere in the app (e.g. Landing page stats, Confidentiality Modal).
+export const getCountableDocuments = (documents: AssessmentDocument[]) =>
+  documents.filter((doc) => doc.condition !== "foreignFunds");
 
 export const getParameterIcon = (iconName: string) => {
   const icons: Record<string, any> = { Scale, TrendingUp, Shield, Settings, Target, MessageSquare };
