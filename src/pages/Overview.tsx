@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Lock, Clock } from "lucide-react";
-import { PARAMETERS, getParameterIcon } from "@/lib/assessment-data";
+import { PARAMETERS, getParameterIcon, getCountableDocuments } from "@/lib/assessment-data";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -57,7 +57,7 @@ const Overview = () => {
                     <Icon size={20} className="text-[#0B3D4A]" />
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#E4F2F6] text-[#0B3D4A] text-xs font-medium">
-                    {param.documents.length} docs
+                    {getCountableDocuments(param.documents).length} docs
                   </span>
                 </div>
                 <h3 className="font-display font-semibold text-[#0B3D4A] text-sm mb-1">{param.name}</h3>
