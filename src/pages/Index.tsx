@@ -39,15 +39,15 @@ const CountUp = ({ target, suffix = "" }: { target: number; suffix?: string }) =
 };
 
 const SwooshArrow = ({ className = "" }: { className?: string }) => (
-  <svg width="90" height="56" viewBox="0 0 90 56" fill="none" className={className} style={{ overflow: "visible", flexShrink: 0 }}>
+  <svg width="90" height="70" viewBox="0 -14 90 70" fill="none" className={className} style={{ overflow: "visible", flexShrink: 0 }}>
     <path
       d="M9 40 C27 12, 57 12, 76 30"
       stroke="#C4872A"
-      strokeWidth="2"
+      strokeWidth="2.5"
       strokeLinecap="round"
       fill="none"
     />
-    <path d="M70 23 L78 30 L69 35" stroke="#C4872A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    <path d="M71 17 L76 30 L63 25" stroke="#C4872A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
   </svg>
 );
 
@@ -134,14 +134,14 @@ const Landing = () => {
       </section>
 
       {/* HOW IT WORKS - Warm */}
-      <section className="relative py-16 md:py-20 overflow-hidden" style={{ backgroundColor: "#8B6B47" }}>
+      <section className="relative py-16 md:py-20 overflow-hidden" style={{ backgroundColor: "#FFFFFF" }}>
         <div className="absolute inset-0 grain-overlay" />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-display font-bold text-white text-2xl md:text-3xl text-center mb-12"
+            className="font-display font-bold text-[#111827] text-2xl md:text-3xl text-center mb-12"
           >
             How it works
           </motion.h2>
@@ -161,16 +161,16 @@ const Landing = () => {
               <>
                 <motion.div key={step.num} variants={fadeInUp} className="flex flex-col items-center text-center">
                   <span className="font-mono text-[#C4872A] text-5xl font-bold mb-3">{step.num}</span>
-                  <p className="text-white font-display font-semibold text-lg mb-2">{step.title}</p>
-                  <p className="text-[#A8CCD5] font-body text-sm">{step.desc}</p>
+                  <p className="text-[#111827] font-display font-semibold text-lg mb-2">{step.title}</p>
+                  <p className="text-[#6B7280] font-body text-sm">{step.desc}</p>
                 </motion.div>
                 {i < 2 && (
-                  <div key={`arrow-${i}`} className="hidden md:flex items-center justify-center px-2">
+                  <div key={`arrow-${i}`} className="hidden md:flex items-center justify-center px-2 overflow-visible">
                     <SwooshArrow />
                   </div>
                 )}
                 {i < 2 && (
-                  <div key={`arrow-mobile-${i}`} className="md:hidden flex justify-center py-2">
+                  <div key={`arrow-mobile-${i}`} className="md:hidden flex justify-center py-2 overflow-visible">
                     <SwooshArrow className="rotate-90" />
                   </div>
                 )}
@@ -246,7 +246,6 @@ const Landing = () => {
                     "A clear score across 6 health parameters",
                     "A prioritised list of documents to act on",
                     "A shareable report for your team or board",
-                    "A free action checklist from The Metropolitan Institute",
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="mt-2 w-2 h-2 rounded-sm bg-[#0B3D4A] shrink-0" />
