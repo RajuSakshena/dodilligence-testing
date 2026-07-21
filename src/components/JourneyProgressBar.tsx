@@ -25,38 +25,38 @@ const JourneyProgressBar = ({ currentSectionId }: { currentSectionId: string }) 
     navigate(`/assessment/${sectionId}`);
   };
 
+  // Compute a single continuous fill percentage across the whole track.
+  // Each of the (n - 1) gaps between nodes contributes an equal share of the
+  // total width; a completed section contributes its full share, while the
+  // active/in-progress section contributes a partial share based on how many
+  // of its questions have been answered. Rendering this as one bar (instead
+  // of one <div> per segment with independent pixel offsets) guarantees the
+  // teal line has no seams, since there is only a single element being sized.
+  const totalSegments = SECTION_ORDER.length - 1;
+  let filledUnits = 0;
+  for (let i = 0; i < totalSegments; i++) {
+    const id = SECTION_ORDER[i];
+    const progress = getSectionProgress(id);
+    const fillPercent = progress.total === 0 ? 100 : (progress.answered / progress.total) * 100;
+    filledUnits += isSectionComplete(id) ? 1 : fillPercent / 100;
+  }
+  const overallFillPercent = totalSegments > 0 ? (filledUnits / totalSegments) * 100 : 0;
+
   return (
     <>
       {/* Desktop full bar */}
       <div className="hidden md:block mb-8" id="journey-progress-bar">
         <div className="relative flex items-center justify-between px-2">
-          {/* Background track */}
-          <div className="absolute left-[12px] right-[12px] top-1/2 -translate-y-1/2 h-1.5 bg-[#E5E7EB] rounded-[3px]" />
-
-          {/* Filled segments */}
-          {SECTION_ORDER.map((id, i) => {
-            if (i === SECTION_ORDER.length - 1) return null;
-            const progress = getSectionProgress(id);
-            const fillPercent = progress.total === 0 ? 100 : (progress.answered / progress.total) * 100;
-            const segmentWidth = `calc(${100 / (SECTION_ORDER.length - 1)}% - 4px)`;
-            const segmentLeft = `calc(${(i / (SECTION_ORDER.length - 1)) * 100}% + 12px)`;
-
-            return (
-              <div
-                key={`seg-${id}`}
-                className="absolute top-1/2 -translate-y-1/2 h-1.5 bg-[#E5E7EB] rounded-[3px] overflow-hidden"
-                style={{ left: segmentLeft, width: segmentWidth }}
-              >
-                <div
-                  className="h-full bg-[#0B3D4A] rounded-[3px]"
-                  style={{
-                    width: `${isSectionComplete(id) ? 100 : fillPercent}%`,
-                    transition: "width 300ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  }}
-                />
-              </div>
-            );
-          })}
+          {/* Background track with a single continuous completed-line overlay */}
+          <div className="absolute left-[12px] right-[12px] top-1/2 -translate-y-1/2 h-1.5 bg-[#E5E7EB] rounded-[3px] overflow-hidden">
+            <div
+              className="h-full bg-[#0B3D4A] rounded-[3px]"
+              style={{
+                width: `${overallFillPercent}%`,
+                transition: "width 300ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+              }}
+            />
+          </div>
 
           {/* Nodes */}
           {SECTION_ORDER.map((id, i) => {
